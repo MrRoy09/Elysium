@@ -1,4 +1,2 @@
-import numpy as np
+import pygame, sys
 
-print("hello world")
-print("another hello world")
