@@ -1,28 +1,8 @@
-import pygame, sys
-import math
+import pygame, sys, math
 import random
 
 pygame.init()
 
-#player class
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image=pygame.image.load('Images\\ship1.png')
-        self.rect=self.image.get_rect(center=(700,400))
-    
-    def player_input(self):
-        Keys = pygame.key.get_pressed()
-        if Keys[pygame.K_RIGHT]:
-            self.rect.x += 10
-        elif Keys[pygame.K_LEFT]:
-            self.rect.x -= 10
-    
-
-    def update(self):
-        self.player_input()
-
-#enemy class
 class EnemyPlayer(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -37,10 +17,38 @@ class EnemyPlayer(pygame.sprite.Sprite):
             self.rect.x -= 10
 
     def update(self):
+        self.player_input()    
+
+
+class Player (pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image=pygame.image.load('Images\\ship1.png')
+        self.rect=self.image.get_rect(center=(700,400))
+    
+    def player_input(self):
+        Keys = pygame.key.get_pressed()
+        if Keys[pygame.K_RIGHT]:
+            self.rect.x += 10
+        elif Keys[pygame.K_LEFT]:
+            self.rect.x -= 10
+
+    def update(self):
         self.player_input()
 
-
+class asteroid(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image=pygame.image.load('Images\\asteroid.png')
+        self.rect=self.image.get_rect(topleft=(700,200))
     
+    def asteroid_movement(self):
+        self.rect.x += 10
+        if self.rect.left==1400: self.rect.right=0
+
+    def update(self):
+        self.asteroid_movement()
+
 #setting the screen up, logo, font, music
 Main_surf = pygame.display.set_mode((1400,750))
 pygame.display.set_caption('Star wars ripoff')
@@ -81,6 +89,8 @@ player1_ship=pygame.sprite.GroupSingle()
 player1_ship.add(Player())
 player2_ship=pygame.sprite.GroupSingle()
 player2_ship.add(EnemyPlayer())
+asteroid1=pygame.sprite.Group()
+asteroid1.add(asteroid())
 
 start_time=0
 
@@ -123,8 +133,8 @@ while True:
         #background animation for level1
         Main_surf.blit(scrn1,(0,intro_y1))
         Main_surf.blit(scrn1,(0,intro_y2))
-        intro_y1+=1
-        intro_y2+=1
+        intro_y1+=2
+        intro_y2+=2
         if intro_y1>750: intro_y1=-750
         if intro_y2>750: intro_y2=-750
 
@@ -132,7 +142,12 @@ while True:
         player1_ship.update()
         player2_ship.draw(Main_surf)
         player2_ship.update()
+        asteroid1.draw(Main_surf)
+        asteroid1.update()
         score_disp()
+
+    elif game_event==2:
+        
 
 
 
