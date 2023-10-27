@@ -39,7 +39,7 @@ class Player (pygame.sprite.Sprite):
 class asteroid(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image=pygame.image.load('Images\\asteroid.png')
+        self.image=pygame.image.load('Images\\asteroid1.png')
         self.rect=self.image.get_rect(topleft=(700,200))
     
     def asteroid_movement(self):
@@ -48,6 +48,7 @@ class asteroid(pygame.sprite.Sprite):
 
     def update(self):
         self.asteroid_movement()
+
 
 #setting the screen up, logo, font, music
 Main_surf = pygame.display.set_mode((1400,750))
@@ -73,6 +74,7 @@ intro_msg_rect2=intro_msg_2.get_rect(center=(700,150))
 Start_button=font_40.render('press space to begin', False, (255,0,100))
 Start_button_rect=Start_button.get_rect(center=(700,400))
 spaceship_show=pygame.image.load('Images\\sma.png').convert_alpha()
+
 
 
 
@@ -105,8 +107,7 @@ while True:
             if event.type==pygame.KEYDOWN and event.key==pygame.K_SPACE:
                     game_event=1
                     start_time=int(pygame.time.get_ticks()/1000) 
-        else:
-            a=1
+        else: a=1
             
      
     if game_event==0:
@@ -124,8 +125,9 @@ while True:
 
         #spaceship move weird animation
         x_sine = pygame.time.get_ticks() / 5  % 1400
-        y_sine = int(math.sin(x_sine/50.0) * 50 + 400)   
+        y_sine = int(math.sin(x_sine/50.0) * 50 + 400)  
         Main_surf.blit(spaceship_show,(x_sine,y_sine))
+
 
         
 
@@ -146,8 +148,6 @@ while True:
         asteroid1.update()
         score_disp()
 
-    elif game_event==2:
-        
 
 
 
