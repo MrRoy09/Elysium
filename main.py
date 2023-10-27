@@ -4,6 +4,43 @@ import random
 
 pygame.init()
 
+#player class
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image=pygame.image.load('Images\\ship1.png')
+        self.rect=self.image.get_rect(center=(700,400))
+    
+    def player_input(self):
+        Keys = pygame.key.get_pressed()
+        if Keys[pygame.K_RIGHT]:
+            self.rect.x += 10
+        elif Keys[pygame.K_LEFT]:
+            self.rect.x -= 10
+    
+
+    def update(self):
+        self.player_input()
+
+#enemy class
+class EnemyPlayer(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image=pygame.image.load('Images\\ship2.png')
+        self.rect=self.image.get_rect(center=(700,700))
+
+    def player_input(self):
+        Keys = pygame.key.get_pressed()
+        if Keys[pygame.K_d]:
+            self.rect.x += 10
+        elif Keys[pygame.K_a]:
+            self.rect.x -= 10
+
+    def update(self):
+        self.player_input()
+
+
+    
 #setting the screen up, logo, font, music
 Main_surf = pygame.display.set_mode((1400,750))
 pygame.display.set_caption('Star wars ripoff')
@@ -33,28 +70,19 @@ spaceship_show=pygame.image.load('Images\\sma.png').convert_alpha()
 
 #playing screen1 setup
 scrn1=pygame.image.load('Images\\Space Background 2.png').convert_alpha()
-intro_y1=750
+intro_y1=-750
 intro_y2=0
 def score_disp():
     score=int(pygame.time.get_ticks()/1000)-start_time
     Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
     Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
     Main_surf.blit(Score_msg,Score_msg_rect)
-player1_ship=pygame.image.load('Images\\ship1.png')
-player1_ship_rect=player1_ship.get_rect(center=(700,400))
+player1_ship=pygame.sprite.GroupSingle()
+player1_ship.add(Player())
+player2_ship=pygame.sprite.GroupSingle()
+player2_ship.add(EnemyPlayer())
+
 start_time=0
-
-#player class
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-
-
-
-#enemy class
-class Enemy(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
 
 
 while True:
@@ -95,13 +123,15 @@ while True:
         #background animation for level1
         Main_surf.blit(scrn1,(0,intro_y1))
         Main_surf.blit(scrn1,(0,intro_y2))
-        intro_y1-=1
-        intro_y2-=1
-        if intro_y1<0: intro_y1=750
-        if intro_y2<-750: intro_y2=0
+        intro_y1+=1
+        intro_y2+=1
+        if intro_y1>750: intro_y1=-750
+        if intro_y2>750: intro_y2=-750
 
-        Main_surf.blit(player1_ship,player1_ship_rect)
-
+        player1_ship.draw(Main_surf)
+        player1_ship.update()
+        player2_ship.draw(Main_surf)
+        player2_ship.update()
         score_disp()
 
 
