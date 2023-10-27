@@ -34,6 +34,12 @@ spaceship_show=pygame.image.load('Images\\sma.png').convert_alpha()
 scrn1=pygame.image.load('Images\\Space Background 2.png').convert_alpha()
 intro_y1=750
 intro_y2=0
+def score_disp():
+    score=int(pygame.time.get_ticks()/1000)
+    Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
+    Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
+    Main_surf.blit(Score_msg,Score_msg_rect)
+
 
 
 
@@ -95,10 +101,7 @@ while True:
         if intro_y1<0: intro_y1=750
         if intro_y2<-750: intro_y2=0
 
-        score=int(pygame.time.get_ticks()/1000)
-        Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
-        Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
-        Main_surf.blit(Score_msg,Score_msg_rect)
+        score_disp()
 
 
 
