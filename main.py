@@ -1,6 +1,6 @@
 import pygame, sys
 import math
-from pygame.sprite import _Group
+import random
 
 pygame.init()
 
@@ -32,8 +32,8 @@ spaceship_show=pygame.image.load('Images\\sma.png').convert_alpha()
 
 #playing screen1 setup
 scrn1=pygame.image.load('Images\\Space Background 2.png').convert_alpha()
-y1=750
-y2=0
+intro_y1=750
+intro_y2=0
 
 
 
@@ -46,8 +46,8 @@ class Player(pygame.sprite.Sprite):
 
 #enemy class
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, *groups: _Group) -> None:
-        super().__init__(*groups)
+    def __init__(self):
+        super().__init__()
 
 
 while True:
@@ -88,12 +88,18 @@ while True:
 
     elif game_event==1:
         #background animation for level1
-        Main_surf.blit(scrn1,(0,y1))
-        Main_surf.blit(scrn1,(0,y2))
-        y1-=1
-        y2-=1
-        if y1<0: y1=750
-        if y2<-750: intro_x2=0
+        Main_surf.blit(scrn1,(0,intro_y1))
+        Main_surf.blit(scrn1,(0,intro_y2))
+        intro_y1-=1
+        intro_y2-=1
+        if intro_y1<0: intro_y1=750
+        if intro_y2<-750: intro_y2=0
+
+        score=int(pygame.time.get_ticks()/1000)
+        Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
+        Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
+        Main_surf.blit(Score_msg,Score_msg_rect)
+
 
 
     pygame.display.update()
