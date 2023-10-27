@@ -1,5 +1,5 @@
 import pygame, sys, math
-import random
+from random import randint
 
 pygame.init()
 
@@ -16,9 +16,13 @@ class EnemyPlayer(pygame.sprite.Sprite):
         elif Keys[pygame.K_a]:
             self.rect.x -= 10
 
-    def update(self):
-        self.player_input()    
+    def player_movement(self):
+        if self.rect.left<=0:self.rect.left=0
+        if self.rect.right>=1400:self.rect.right=1400       
 
+    def update(self):
+        self.player_input()
+        self.player_movement()
 
 class Player (pygame.sprite.Sprite):
     def __init__(self):
@@ -32,9 +36,16 @@ class Player (pygame.sprite.Sprite):
             self.rect.x += 10
         elif Keys[pygame.K_LEFT]:
             self.rect.x -= 10
+    
+    def player_movement(self):
+        self.rect.y-=0.1
+        if self.rect.left<=0:self.rect.left=0
+        if self.rect.right>=1400:self.rect.right=1400
+
 
     def update(self):
         self.player_input()
+        self.player_movement()
 
 class asteroid(pygame.sprite.Sprite):
     def __init__(self):
@@ -44,7 +55,10 @@ class asteroid(pygame.sprite.Sprite):
     
     def asteroid_movement(self):
         self.rect.x += 10
+        self.rect.y += 10
         if self.rect.left==1400: self.rect.right=0
+        if self.rect.top==750: self.rect.bottom=randint(100,500)
+
 
     def update(self):
         self.asteroid_movement()
@@ -122,6 +136,8 @@ while True:
         Main_surf.blit(intro_msg_2,intro_msg_rect2)
         pygame.draw.rect(Main_surf,(255,0,100),Start_button_rect,2)
         Main_surf.blit(Start_button,Start_button_rect)
+        asteroid1.draw(Main_surf)
+        asteroid1.update()
 
         #spaceship move weird animation
         x_sine = pygame.time.get_ticks() / 5  % 1400
