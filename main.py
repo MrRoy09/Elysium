@@ -25,9 +25,10 @@ intro_msg_1=font_20.render('Dog in a Box Studio presents:', False, 'Green')
 intro_msg_rect1=intro_msg_1.get_rect(center=(700,50))
 intro_msg_2=font_60.render('Star wars ripoff', False, 'Blue')
 intro_msg_rect2=intro_msg_2.get_rect(center=(700,150))
-Start_button=font_40.render('press space to begin', False, (100,0,100))
+Start_button=font_40.render('press space to begin', False, (255,0,100))
 Start_button_rect=Start_button.get_rect(center=(700,400))
 spaceship_show=pygame.image.load('Images\\sma.png').convert_alpha()
+
 
 
 #playing screen1 setup
@@ -35,13 +36,13 @@ scrn1=pygame.image.load('Images\\Space Background 2.png').convert_alpha()
 intro_y1=750
 intro_y2=0
 def score_disp():
-    score=int(pygame.time.get_ticks()/1000)
+    score=int(pygame.time.get_ticks()/1000)-start_time
     Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
     Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
     Main_surf.blit(Score_msg,Score_msg_rect)
-
-
-
+player1_ship=pygame.image.load('Images\\ship1.png')
+player1_ship_rect=player1_ship.get_rect(center=(700,400))
+start_time=0
 
 #player class
 class Player(pygame.sprite.Sprite):
@@ -65,6 +66,7 @@ while True:
         if game_event==0:
             if event.type==pygame.KEYDOWN and event.key==pygame.K_SPACE:
                     game_event=1
+                    start_time=int(pygame.time.get_ticks()/1000) 
         else:
             a=1
             
@@ -79,16 +81,13 @@ while True:
         if intro_x2<-1400: intro_x2=0
         Main_surf.blit(intro_msg_1,intro_msg_rect1)
         Main_surf.blit(intro_msg_2,intro_msg_rect2)
-        pygame.draw.rect(Main_surf,(100,0,100),Start_button_rect,2)
+        pygame.draw.rect(Main_surf,(255,0,100),Start_button_rect,2)
         Main_surf.blit(Start_button,Start_button_rect)
 
-
         #spaceship move weird animation
-        '''x_sine = intro_x1 / 5  % 1400
+        x_sine = pygame.time.get_ticks() / 5  % 1400
         y_sine = int(math.sin(x_sine/50.0) * 50 + 400)   
-        Main_surf.blit(spaceship_show,(x_sine,y_sine+100))
-        Main_surf.blit(spaceship_show,(x_sine+200,y_sine))
-        Main_surf.blit(spaceship_show,(x_sine-200,y_sine))'''
+        Main_surf.blit(spaceship_show,(x_sine,y_sine))
 
         
 
@@ -100,6 +99,8 @@ while True:
         intro_y2-=1
         if intro_y1<0: intro_y1=750
         if intro_y2<-750: intro_y2=0
+
+        Main_surf.blit(player1_ship,player1_ship_rect)
 
         score_disp()
 
