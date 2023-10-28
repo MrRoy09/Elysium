@@ -42,7 +42,20 @@ class Player (pygame.sprite.Sprite):
         if self.rect.left<=0: self.rect.left=0
 
      def mov_forward(self):
-        pass
+        time_start = int(pygame.time.get_ticks() / 1000) - start_time
+        while self.rect.bottom >= 0:
+            if time_start >=10 and time_start <= 20:
+                self.rect.y -= 0.6
+            elif time_start >= 60 and time_start <= 70:
+                self.rect.y -= 0.6
+            elif time_start >= 130 and time_start <= 140:
+                self.rect.y -= 0.6
+        if self.rect.bottom <= 0:
+            print("PLAYER WINS")
+            game_event = 0
+        else:
+            print("ERROR")
+            sys.exit()
          
 
      def update(self):
