@@ -292,7 +292,6 @@ if __name__=='__main__':
                 bg_music_play0.play(loops = -1)
                 bg_music0+=1
 
-
             asteroid1.draw(Main_surf)
             asteroid1.update(2,2)
 
@@ -305,8 +304,8 @@ if __name__=='__main__':
             #background animation for level1
             Main_surf.blit(scrn1,(0,intro_y1))
             Main_surf.blit(scrn1,(0,intro_y2))
-            intro_y1+=2
-            intro_y2+=2
+            intro_y1+=1
+            intro_y2+=1
             if intro_y1>750: intro_y1=-750
             if intro_y2>750: intro_y2=-750
             if bg_music1==0:
@@ -320,12 +319,6 @@ if __name__=='__main__':
 
             score_disp()  
             game.run_ep()
-
-        elif game_event==2:
-            pass
-
-        elif game_event==3:
-            pass
 
         pygame.display.update()
         clock.tick(60)
