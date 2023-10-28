@@ -1,16 +1,16 @@
 from gc import garbage
 import pygame, sys, math
 from random import randint
-
+pygame.init()
 
 class Player (pygame.sprite.Sprite):
      def __init__(self,pos):
         super().__init__()
-        self.image=pygame.image.load('Images\\ship1.png')
+        self.image=pygame.image.load('Images\\ship1.png').convert_alpha()
         self.rect=self.image.get_rect(center=pos)
         self.ready = True
         self.laser_time = 0
-        self.laser_cooldown = 600
+        self.laser_cooldown = 1000
 
         self.lasers = pygame.sprite.Group()
         self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
@@ -51,11 +51,11 @@ class Player (pygame.sprite.Sprite):
 class EnemyPlayer(pygame.sprite.Sprite):
     def __init__(self,pos):
         super().__init__()
-        self.image=pygame.image.load('Images\\ship2.png')
+        self.image=pygame.image.load('Images\\ship2.png').convert_alpha()
         self.rect=self.image.get_rect(center=pos)
         self.ready = True
         self.laser_time = 0
-        self.laser_cooldown = 600
+        self.laser_cooldown = 1000
 
         self.lasers = pygame.sprite.Group()
         self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
@@ -177,8 +177,6 @@ class Game:
         self.playerep.draw(Main_surf)
     
 if __name__=='__main__':
-    pygame.init()
-
     #setting the screen up, logo, font, music
     Main_surf = pygame.display.set_mode((1400,750))
     pygame.display.set_caption('Star wars ripoff')
@@ -187,8 +185,8 @@ if __name__=='__main__':
     font_20=pygame.font.Font('pixel.ttf',20)
     font_40=pygame.font.Font('pixel.ttf',40)
     font_60=pygame.font.Font('pixel.ttf',60)
-    bg_music = pygame.mixer.Sound('audio\\music.mp3')
-    bg_music.play(loops = -1)
+    bg_music0=0
+    bg_music1=0
     clock = pygame.time.Clock()
     start_time=0
     game_event=0
@@ -252,8 +250,8 @@ if __name__=='__main__':
             elif game_event==1:
                 if event.type==astrid_timer:
                     asteroid2.add(asteroid())
-                
-        
+
+
         if game_event==0:
             #background animations
             Main_surf.blit(intro_scrn,(intro_x1,0))
@@ -270,6 +268,11 @@ if __name__=='__main__':
             Main_surf.blit(connect2,connect2_rect)
             Main_surf.blit(connect1_text,connect1_text_rect)
             Main_surf.blit(connect2_text,connect2_text_rect)
+            if bg_music0==0:
+                bg_music_play0 = pygame.mixer.Sound('audio\\music.mp3')
+                bg_music_play0.play(loops = -1)
+                bg_music0+=1
+
 
             asteroid1.draw(Main_surf)
             asteroid1.update(2,2)
@@ -279,7 +282,6 @@ if __name__=='__main__':
             y_sine = int(math.sin(x_sine/50.0) * 50 + 400)  
             Main_surf.blit(spaceship_show,(x_sine,y_sine))
 
-
         elif game_event==1:
             #background animation for level1
             Main_surf.blit(scrn1,(0,intro_y1))
@@ -288,6 +290,11 @@ if __name__=='__main__':
             intro_y2+=2
             if intro_y1>750: intro_y1=-750
             if intro_y2>750: intro_y2=-750
+            if bg_music1==0:
+                bg_music_play1 = pygame.mixer.Sound('audio\\level_1.mp3')
+                bg_music_play0.fadeout(50)
+                bg_music_play1.play(loops = -1)
+                bg_music1+=1
 
             asteroid2.draw(Main_surf)
             asteroid2.update(0,3)
