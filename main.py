@@ -184,7 +184,13 @@ class Game:
         self.playerep.sprite.lasers.draw(Main_surf)
         
         
+        collided2 = pygame.sprite.spritecollide(self.playermp.sprite, asteroid2, dokill=False)
+        collided3= pygame.sprite.spritecollide(self.playermp.sprite, garbage, dokill=False)
         
+        collided5 = pygame.sprite.spritecollide(self.playerep.sprite, asteroid2, dokill=False)
+        collided6= pygame.sprite.spritecollide(self.playerep.sprite,garbage,dokill=False)
+        if collided2 or collided5:
+            game_event=2
         
 
 
