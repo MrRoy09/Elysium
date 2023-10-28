@@ -1,5 +1,6 @@
 import pygame, sys, math
 from random import randint
+import numpy as np
 
 pygame.init()
 
