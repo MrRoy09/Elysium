@@ -62,8 +62,7 @@ class asteroid(pygame.sprite.Sprite):
              self.kill()
 
 class Game:
-    intro_y1=-750
-    intro_y2=0
+    
     start_time=0
     
     def __init__(self):
