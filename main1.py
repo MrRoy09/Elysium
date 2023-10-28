@@ -14,6 +14,7 @@ print("socket created")
 port = 9999
 s.bind(('192.168.250.177', port))
 
+
 def accept_client_connections():
     while True:
         i = len(client_list)
@@ -30,13 +31,14 @@ def accept_client_connections():
 def client1_handler(client1):
     global sensor1
     global data
-
+    global connect1
+    connect1 = pygame.image.load('Images\\connected.png').convert_alpha()
     sensor1='orientation sensor'
     while True:
 
         try:
             data= eval(client1.recv(1024).decode())[sensor1]
-            print(data)
+            #print(data)
 
 
         except Exception as e:
@@ -44,13 +46,15 @@ def client1_handler(client1):
 def client2_handler(client2):
     global data2
     global sensor2
+    global connect2
+    connect2 = pygame.image.load('Images\\connected.png').convert_alpha()
     sensor2='rotation vector'
 
     while True:
 
         try:
             data2 = eval(client2.recv(1024).decode())[sensor2]
-            print("data from client 2 is" ,data)
+            #print("data from client 2 is" ,data)
         except Exception as e:
             pass
 
@@ -236,6 +240,7 @@ class Game:
         collided3 = pygame.sprite.spritecollide(self.playerep.sprite, asteroid2, dokill=False)
         collided4= pygame.sprite.spritecollide(self.playerep.sprite,garbage,dokill=False)
         if collided1 or collided3:
+            print("collision")
             game_event=2
 
 
@@ -246,6 +251,9 @@ def initFunction():
     global asteroid1
     global asteroid2
     global garbage
+    global connect1
+    global connect2
+    global game_event
     Main_surf = pygame.display.set_mode((1400, 750))
 
     pygame.display.set_caption('Star wars ripoff')
@@ -279,14 +287,12 @@ def initFunction():
         connect1_rect = connect1.get_rect(center=(300, 600))
         connect1_text = font_20.render('Connection 1', False, 'Green')
         connect1_text_rect = connect1_text.get_rect(center=(300, 700))
-        if connection_ == 1:
-            connect1 = pygame.image.load('Images\\connected.png').convert_alpha()
+
         connect2 = pygame.image.load('Images\\disconnect.png').convert_alpha()
         connect2_rect = connect2.get_rect(center=(1100, 600))
         connect2_text = font_20.render('Connection 2', False, 'Green')
         connect2_text_rect = connect1_text.get_rect(center=(1100, 700))
-        if connection_ == 1:
-            connect2 = pygame.image.load('Images\\connected.png').convert_alpha()
+
 
     asteroid1 = pygame.sprite.Group()
     asteroid2 = pygame.sprite.Group()
@@ -314,6 +320,8 @@ def initFunction():
 
 
     while True:
+
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
