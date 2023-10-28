@@ -38,7 +38,8 @@ def client1_handler(client1):
 
         try:
             data= eval(client1.recv(1024).decode())[sensor1]
-            #print(data)
+            print(data[1])
+
 
 
         except Exception as e:
@@ -71,16 +72,17 @@ class Player (pygame.sprite.Sprite):
         self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
         self.laser_sound.set_volume(0.5)
     
-     def player_input(self,x):
+     def player_input(self,x,y):
         Keys=pygame.key.get_pressed()
-        self.rect.x += x
+        self.rect.x -= x
 
 
-        if Keys[pygame.K_UP] and self.ready:
-            self.laser_shoot()
-            self.ready = False
-            self.laser_time = pygame.time.get_ticks()
-            self.laser_sound.play()
+        if y<35:
+            if self.ready==True:
+                self.laser_shoot()
+                self.ready = False
+                self.laser_time = pygame.time.get_ticks()
+                self.laser_sound.play()
     
      def recharge(self):
         if not self.ready:
@@ -97,19 +99,20 @@ class Player (pygame.sprite.Sprite):
 
      def mov_forward(self):
         global game_event
-        start_tim = 0
-        start_val = int(pygame.time.get_ticks() / 1000) - start_tim
+        start_val = int(pygame.time.get_ticks() / 1000)
         if self.rect.top <= 0:
             game_event=2
         if start_val >= 10 and start_val <= 12:
             self.rect.top -= 0.6
-        elif start_val > 15:
-            start_tim=start_val
+        elif start_val >= 22 and start_val <= 24:
+            self.rect.top -= 0.6
+        elif start_val >= 34 and start_val <= 36:
+            self.rect.top -= 0.6
          
 
-     def update(self,x):
+     def update(self,x,y):
         self.mov_forward()
-        self.player_input(x)
+        self.player_input(x,y)
         self.mov_const()
         self.recharge()
         self.lasers.update()
@@ -128,15 +131,16 @@ class EnemyPlayer(pygame.sprite.Sprite):
         self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
         self.laser_sound.set_volume(0.5)
     
-    def player_input(self,x):
+    def player_input(self,x,y):
         Keys = pygame.key.get_pressed()
-        self.rect.x += x
+        self.rect.x -= x
 
-        if Keys[pygame.K_w] and self.ready:
-            self.laser_shoot()
-            self.ready = False
-            self.laser_time = pygame.time.get_ticks()
-            self.laser_sound.play()
+        if y<40:
+            if self.ready==True:
+                self.laser_shoot()
+                self.ready = False
+                self.laser_time = pygame.time.get_ticks()
+                self.laser_sound.play()
     
     def recharge(self):
         if not self.ready:
@@ -145,14 +149,14 @@ class EnemyPlayer(pygame.sprite.Sprite):
                  self.ready = True
     
     def laser_shoot(self):
-        self.lasers.add(Laser(self.rect.center,-8))
+        self.lasers.add(Laser(self.rect.center,-12))
 
     def mov_const(self):
         if self.rect.right>=1400: self.rect.right=1400
         if self.rect.left<=0: self.rect.left=0
 
-    def update(self,x):
-        self.player_input(x)
+    def update(self,x,y):
+        self.player_input(x,y)
         self.mov_const()
         self.recharge()
         self.lasers.update()
@@ -160,7 +164,7 @@ class EnemyPlayer(pygame.sprite.Sprite):
 class Laser(pygame.sprite.Sprite): 
 	def __init__(self,pos,speed):
 		super().__init__()
-		self.image = pygame.Surface((4,10))
+		self.image = pygame.Surface((7,10))
 		self.image.fill('white')
 		self.rect = self.image.get_rect(center = pos)
 		self.speed = speed
@@ -221,26 +225,56 @@ class Garbage(pygame.sprite.Sprite):
 
 class Game:
     def __init__(self):
-        self.player1_ship=Player((700,500))
+        global lasers_g1
+        global lasers_g2
+        self.player1_ship=Player((300,500))
         self.playermp=pygame.sprite.GroupSingle(self.player1_ship)
-        self.player2_ship=EnemyPlayer((700,700))
+        self.player2_ship=EnemyPlayer((1000,700))
         self.playerep=pygame.sprite.GroupSingle(self.player2_ship)
+        lasers_g1=self.player1_ship.lasers
+        lasers_g2 = self.player2_ship.lasers
 
-    def run_ep(self,x1,x2):
+    def run_ep(self,x1,x2,y1,y2):
         global game_event
-        self.playermp.update(x1)
+        global player_event
+        player_event = 0
+        self.playermp.update(x1,y1)
         self.playermp.draw(Main_surf)
         self.playermp.sprite.lasers.draw(Main_surf)
-        self.playerep.update(x2)
+        self.playerep.update(x2,y2)
         self.playerep.draw(Main_surf)
         self.playerep.sprite.lasers.draw(Main_surf)
+        colid_laser1=pygame.sprite.spritecollide(self.playermp.sprite, lasers_g2,dokill=False)
+
 
         collided1 = pygame.sprite.spritecollide(self.playermp.sprite, asteroid2, dokill=False)
         collided2= pygame.sprite.spritecollide(self.playermp.sprite, garbage, dokill=False)
         collided3 = pygame.sprite.spritecollide(self.playerep.sprite, asteroid2, dokill=False)
         collided4= pygame.sprite.spritecollide(self.playerep.sprite,garbage,dokill=False)
+        #collided5 = pygame.sprite.spritecollide(garbage.sprites,lasers_g2,dokill=False)
+        #collided6 = pygame.sprite.spritecollide(garbage.sprites, lasers_g1, dokill=False)
         if collided1 or collided3:
             print("collision")
+            game_event=2
+            player_event = 0
+        for i in garbage.sprites():
+            if pygame.sprite.spritecollide(i, lasers_g2, dokill=True) or pygame.sprite.spritecollide(i, lasers_g1,dokill=True):
+                garbage.remove(i)
+        #if collided2:
+            #count1 = 1
+            #if count1 == 0.5:
+                #game_event == 2
+                #player_event = 1
+            #count1 -= 0.5
+
+        #if collided4:
+            #count2 = 1
+            #if count2 == 0.5:
+                #game_event == 2
+                #player_event = 2
+            #count2 -= 0.5
+        if colid_laser1:
+            print("collison is working")
             game_event=2
 
 
@@ -310,7 +344,10 @@ def initFunction():
     #gameover screen
     game_over_text=font_60.render('GAME OVER', False, 'Red')
     game_over_text_rect=game_over_text.get_rect(center=(700,400))
-
+    player_wins = font_60.render('PLAYER WINS', False, 'Red')
+    player_wins_rect = player_wins.get_rect(center=(700, 400))
+    enemy_wins = font_60.render('ENEMY WINS', False, 'Red')
+    enemy_wins_rect = enemy_wins.get_rect(center=(700, 400))
 
     def score_disp():
         score = int(pygame.time.get_ticks() / 1000) - start_time
@@ -388,14 +425,21 @@ def initFunction():
             garbage.draw(Main_surf)
             garbage.update(0, randint(0, 3))
 
-            x1 = (data[1]-8)*0.3
+            x1 = (data[1]+12)*0.28
             x2 = (data2[1]-8)*0.3
+            y1=data[2]
+            y2=data2[2]
             score_disp()
-            game.run_ep(x1, x2)
+            game.run_ep(x1, x2,y1,y2)
 
         elif game_event==2:
             Main_surf.fill('black')
-            Main_surf.blit(game_over_text,game_over_text_rect)
+            if player_event == 0:
+                Main_surf.blit(game_over_text,game_over_text_rect)
+            elif player_event == 1:
+                Main_surf.blit(enemy_wins, enemy_wins_rect)
+            elif player_event == 2:
+                Main_surf.blit(player_wins, player_wins_rect)
             if bg_music2==0:
                 bg_music_play2 = pygame.mixer.Sound('audio\\game_over.mp3')
                 bg_music_play1.fadeout(200)

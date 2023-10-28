@@ -176,6 +176,7 @@ class Game:
         self.playerep=pygame.sprite.GroupSingle(self.player2_ship)
 
     def run_ep(self):
+        global game_event
         self.playermp.update()
         self.playermp.draw(Main_surf)
         self.playermp.sprite.lasers.draw(Main_surf)
