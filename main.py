@@ -9,7 +9,7 @@ class Player (pygame.sprite.Sprite):
         self.rect=self.image.get_rect(center=pos)
         self.ready = True
         self.laser_time = 0
-        self.laser_cooldown = 1000
+        self.laser_cooldown = 2000
 
         self.lasers = pygame.sprite.Group()
         self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
@@ -32,7 +32,7 @@ class Player (pygame.sprite.Sprite):
         if not self.ready:
             current_time = pygame.time.get_ticks()
             if current_time - self.laser_time >= self.laser_cooldown:
-                 self.ready = True
+                self.ready = True
     
      def laser_shoot(self):
         self.lasers.add(Laser(self.rect.center,-8))
@@ -41,7 +41,12 @@ class Player (pygame.sprite.Sprite):
         if self.rect.right>=1400: self.rect.right=1400
         if self.rect.left<=0: self.rect.left=0
 
+     def mov_forward(self):
+        pass
+         
+
      def update(self):
+        self.mov_forward()
         self.player_input()
         self.mov_const()
         self.recharge()
@@ -66,7 +71,7 @@ class EnemyPlayer(pygame.sprite.Sprite):
             self.rect.x += 10
         elif Keys[pygame.K_a]:
             self.rect.x -= 10
-        if Keys[pygame.K_q]:
+        if Keys[pygame.K_w]:
             self.laser_shoot()
             self.ready = False
             self.laser_time = pygame.time.get_ticks()
@@ -94,7 +99,7 @@ class EnemyPlayer(pygame.sprite.Sprite):
 class Laser(pygame.sprite.Sprite): 
 	def __init__(self,pos,speed):
 		super().__init__()
-		self.image = pygame.Surface((10,50))
+		self.image = pygame.Surface((4,10))
 		self.image.fill('white')
 		self.rect = self.image.get_rect(center = pos)
 		self.speed = speed
@@ -161,10 +166,9 @@ class Garbage(pygame.sprite.Sprite):
         if self.rect.y >= 900:
              self.kill()
 
-
 class Game:
     def __init__(self):
-        self.player1_ship=Player((700,300))
+        self.player1_ship=Player((700,500))
         self.playermp=pygame.sprite.GroupSingle(self.player1_ship)
         self.player2_ship=EnemyPlayer((700,700))
         self.playerep=pygame.sprite.GroupSingle(self.player2_ship)
@@ -172,8 +176,11 @@ class Game:
     def run_ep(self):
         self.playermp.update()
         self.playermp.draw(Main_surf)
+        self.playermp.sprite.lasers.draw(Main_surf)
         self.playerep.update()
         self.playerep.draw(Main_surf)
+        self.playerep.sprite.lasers.draw(Main_surf)
+
     
 if __name__=='__main__':
     #setting the screen up, logo, font, music
@@ -273,7 +280,7 @@ if __name__=='__main__':
                 bg_music0+=1
 
 
-            # asteroid1.draw(Main_surf)
+            asteroid1.draw(Main_surf)
             asteroid1.update(2,2)
 
             #spaceship move weird animation
@@ -300,6 +307,12 @@ if __name__=='__main__':
 
             score_disp()  
             game.run_ep()
+
+        elif game_event==2:
+            pass
+
+        elif game_event==3:
+            pass
 
         pygame.display.update()
         clock.tick(60)
