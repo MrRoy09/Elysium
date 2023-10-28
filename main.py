@@ -67,9 +67,9 @@ class Game:
     
     def __init__(self):
         player1_ship=Player((700,300))
-        self.player1=pygame.sprite.GroupSingle(player1_ship)
+        self.playermp=pygame.sprite.GroupSingle(player1_ship)
         player2_ship=EnemyPlayer((700,700))
-        self.player2=pygame.sprite.GroupSingle(player2_ship)
+        self.playerep=pygame.sprite.GroupSingle(player2_ship)
 
     def score_disp(self):
         score=int(pygame.time.get_ticks()/1000)-start_time
@@ -77,11 +77,12 @@ class Game:
         Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
         Main_surf.blit(Score_msg,Score_msg_rect)
 
-    def run(self): 
-        self.player1.update()
-        self.player1.draw(Main_surf)
-        self.player2.update()
-        self.player2.draw(Main_surf)
+    def run_mp(self): 
+        self.playermp.update()
+        self.playermp.draw(Main_surf)
+    def run_ep(self):
+        self.playerep.update()
+        self.playerep.draw(Main_surf)
 
 
     
@@ -198,7 +199,9 @@ if __name__=='__main__':
             if intro_y1>750: intro_y1=-750
             if intro_y2>750: intro_y2=-750
 
-            game.run() 
+            game.run_mp() 
+            game.run_ep()
+
 
         pygame.display.update()
         clock.tick(60)
