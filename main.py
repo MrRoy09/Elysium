@@ -1,16 +1,15 @@
-import pyautogui
 import pygame, sys, math
 from random import randint
 pygame.init()
 
 class Player (pygame.sprite.Sprite):
-     def __init__(self,pos):
+     def __init__(self):
         super().__init__()
         self.image=pygame.image.load('Images\\ship1.png')
-        self.rect=self.image.get_rect(center=pos)
+        self.rect=self.image.get_rect(center=(700,500))
         self.ready = True
         self.laser_time = 0
-        self.laser_cooldown = 1000
+        self.laser_cooldown = 800
 
         self.lasers = pygame.sprite.Group()
         self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
@@ -43,8 +42,11 @@ class Player (pygame.sprite.Sprite):
         if self.rect.left<=0: self.rect.left=0
 
      def mov_forward(self):
-        pass
-         
+         pass
+        #starting=int(pygame.time.get_ticks()/1000)
+        #if starting==15:
+         #   self.rect.y-=100
+         #    starting=0
 
      def update(self):
         self.mov_forward()
@@ -54,13 +56,13 @@ class Player (pygame.sprite.Sprite):
         self.lasers.update()
     
 class EnemyPlayer(pygame.sprite.Sprite):
-    def __init__(self,pos):
+    def __init__(self):
         super().__init__()
         self.image=pygame.image.load('Images\\ship2.png')
-        self.rect=self.image.get_rect(center=pos)
+        self.rect=self.image.get_rect(center=(700,700))
         self.ready = True
         self.laser_time = 0
-        self.laser_cooldown = 1000
+        self.laser_cooldown = 800
 
         self.lasers = pygame.sprite.Group()
         self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
@@ -87,6 +89,7 @@ class EnemyPlayer(pygame.sprite.Sprite):
     def laser_shoot(self):
         self.lasers.add(Laser(self.rect.center,-8))
 
+
     def mov_const(self):
         if self.rect.right>=1400: self.rect.right=1400
         if self.rect.left<=0: self.rect.left=0
@@ -97,7 +100,7 @@ class EnemyPlayer(pygame.sprite.Sprite):
         self.recharge()
         self.lasers.update()
 
-class Laser(pygame.sprite.Sprite): 
+class Laser(pygame.sprite.Sprite):
 	def __init__(self,pos,speed):
 		super().__init__()
 		self.image = pygame.Surface((4,10))
@@ -153,17 +156,12 @@ class Garbage(pygame.sprite.Sprite):
              self.kill()    
         if self.rect.y >= 900:
              self.kill()
-    
-    def collide(self):
-        if self.rect.colliderect(Laser.rect):
-            print ('gg')
 				
-
 class Game:
     def __init__(self):
-        self.player1_ship=Player((700,500))
+        self.player1_ship=Player()
         self.playermp=pygame.sprite.GroupSingle(self.player1_ship)
-        self.player2_ship=EnemyPlayer((700,700))
+        self.player2_ship=EnemyPlayer()
         self.playerep=pygame.sprite.GroupSingle(self.player2_ship)
 
     def run_ep(self):
@@ -173,7 +171,7 @@ class Game:
         self.playerep.update()
         self.playerep.draw(Main_surf)
         self.playerep.sprite.lasers.draw(Main_surf)
-
+ 
     
 if __name__=='__main__':
     #setting the screen up, logo, font, music
