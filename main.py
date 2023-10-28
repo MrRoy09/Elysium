@@ -62,13 +62,32 @@ class asteroid(pygame.sprite.Sprite):
              self.kill()
 
 class Game:
+    
+    intro_y1=-750
+    intro_y2=0
+
     def __init__(self):
         player1_ship=Player((700,300))
         self.player1=pygame.sprite.GroupSingle(player1_ship)
         player2_ship=EnemyPlayer((700,700))
         self.player2=pygame.sprite.GroupSingle(player2_ship)
 
+    def background(self):
+        Main_surf.blit(scrn1,(0,intro_y1))
+        Main_surf.blit(scrn1,(0,intro_y2))
+        intro_y1+=2
+        intro_y2+=2
+        if intro_y1>750: intro_y1=-750
+        if intro_y2>750: intro_y2=-750
+
+    def score_disp():
+        score=int(pygame.time.get_ticks()/1000)-start_time
+        Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
+        Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
+        Main_surf.blit(Score_msg,Score_msg_rect)
+
     def run(self):
+        self.score_disp()
         self.player1.update()
         self.player1.draw(Main_surf)
         self.player2.update()
@@ -185,17 +204,19 @@ if __name__=='__main__':
 
         elif game_event==1:
             #background animation for level1
-            Main_surf.blit(scrn1,(0,intro_y1))
+            '''Main_surf.blit(scrn1,(0,intro_y1))
             Main_surf.blit(scrn1,(0,intro_y2))
             intro_y1+=2
             intro_y2+=2
             if intro_y1>750: intro_y1=-750
             if intro_y2>750: intro_y2=-750
 
+            game.run() 
             asteroid1.draw(Main_surf)
             asteroid1.update(0,3)
 
-            score_disp()
+            score_disp()'''
+            game.run()
 
         pygame.display.update()
         clock.tick(60)
