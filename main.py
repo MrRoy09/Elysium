@@ -72,7 +72,7 @@ class Game:
         player2_ship=EnemyPlayer((700,700))
         self.player2=pygame.sprite.GroupSingle(player2_ship)
 
-    def background(self):
+    '''def background(self):
         Main_surf.blit(scrn1,(0,intro_y1))
         Main_surf.blit(scrn1,(0,intro_y2))
         intro_y1+=2
@@ -80,14 +80,13 @@ class Game:
         if intro_y1>750: intro_y1=-750
         if intro_y2>750: intro_y2=-750
 
-    '''def score_disp(self):
+    def score_disp(self):
         score=int(pygame.time.get_ticks()/1000)-start_time
         Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
         Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
         Main_surf.blit(Score_msg,Score_msg_rect)
 '''
-    def run(self):
-        self.background()
+    def run(self): 
         self.player1.update()
         self.player1.draw(Main_surf)
         self.player2.update()
