@@ -1,3 +1,4 @@
+import pyautogui
 import pygame, sys, math
 from random import randint
 pygame.init()
@@ -9,7 +10,7 @@ class Player (pygame.sprite.Sprite):
         self.rect=self.image.get_rect(center=pos)
         self.ready = True
         self.laser_time = 0
-        self.laser_cooldown = 2000
+        self.laser_cooldown = 1000
 
         self.lasers = pygame.sprite.Group()
         self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
@@ -22,7 +23,7 @@ class Player (pygame.sprite.Sprite):
         elif Keys[pygame.K_LEFT]:
             self.rect.x -= 10
 
-        if Keys[pygame.K_UP]:
+        if Keys[pygame.K_UP] and self.ready:
             self.laser_shoot()
             self.ready = False
             self.laser_time = pygame.time.get_ticks()
@@ -42,20 +43,7 @@ class Player (pygame.sprite.Sprite):
         if self.rect.left<=0: self.rect.left=0
 
      def mov_forward(self):
-        time_start = int(pygame.time.get_ticks() / 1000) - start_time
-        while self.rect.bottom >= 0:
-            if time_start >=10 and time_start <= 20:
-                self.rect.y -= 0.6
-            elif time_start >= 60 and time_start <= 70:
-                self.rect.y -= 0.6
-            elif time_start >= 130 and time_start <= 140:
-                self.rect.y -= 0.6
-        if self.rect.bottom <= 0:
-            print("PLAYER WINS")
-            game_event = 0
-        else:
-            print("ERROR")
-            sys.exit()
+        pass
          
 
      def update(self):
@@ -84,7 +72,7 @@ class EnemyPlayer(pygame.sprite.Sprite):
             self.rect.x += 10
         elif Keys[pygame.K_a]:
             self.rect.x -= 10
-        if Keys[pygame.K_w]:
+        if Keys[pygame.K_w] and self.ready:
             self.laser_shoot()
             self.ready = False
             self.laser_time = pygame.time.get_ticks()
@@ -128,8 +116,11 @@ class Laser(pygame.sprite.Sprite):
 
 class asteroid(pygame.sprite.Sprite):
     def __init__(self):
+        asteroid_index=randint(0,2)
+        aster_list=['asteroid1','asteroid2','asteroid3']
+        aster=aster_list[asteroid_index]
         super().__init__()
-        self.image=pygame.image.load('Images\\asteroid1.png')
+        self.image=pygame.image.load(f'Images\\{aster}.png')
         self.rect = self.image.get_rect(midbottom = (randint(200,1400),0))
 
     def update(self,spx,spy):
@@ -144,7 +135,7 @@ class asteroid(pygame.sprite.Sprite):
              self.kill()
 
 class Garbage(pygame.sprite.Sprite):
-    def __init__(self,type):
+    def __init__(self):
         garbage_index=randint(0,3)
         garbage_list=['banana','paper','trash','Metal']
         garbage=garbage_list[garbage_index]
@@ -162,22 +153,11 @@ class Garbage(pygame.sprite.Sprite):
              self.kill()    
         if self.rect.y >= 900:
              self.kill()
-
-    def __init__(self):
-        super().__init__()
-        self.image=pygame.image.load('Images\\asteroid1.png')
-        self.rect = self.image.get_rect(midbottom = (randint(200,1400),0))
-
-    def update(self,spx,spy):
-        self.rect.x -= spx
-        self.rect.y += spy
-        self.destroy()
     
-    def destroy(self):
-        if self.rect.x <= -100: 
-             self.kill()    
-        if self.rect.y >= 900:
-             self.kill()
+    def collide(self):
+        if self.rect.colliderect(Laser.rect):
+            print ('gg')
+				
 
 class Game:
     def __init__(self):
@@ -239,8 +219,11 @@ if __name__=='__main__':
 
     asteroid1=pygame.sprite.Group()
     asteroid2=pygame.sprite.Group()
+    garbage=pygame.sprite.Group()
     astrid_timer=pygame.USEREVENT + 1
-    pygame.time.set_timer(astrid_timer,randint(1000,2500))
+    pygame.time.set_timer(astrid_timer,randint(500,2500))
+    garbage_timer=pygame.USEREVENT + 1
+    pygame.time.set_timer(garbage_timer,randint(1500,2500))
 
     #playing screen1 setup
     scrn1=pygame.image.load('Images\\Space Background 2.png').convert_alpha()
@@ -269,6 +252,8 @@ if __name__=='__main__':
             elif game_event==1:
                 if event.type==astrid_timer:
                     asteroid2.add(asteroid())
+                if event.type==garbage_timer:
+                    garbage.add(Garbage())
 
 
         if game_event==0:
@@ -279,6 +264,8 @@ if __name__=='__main__':
             intro_x2-=1
             if intro_x1<0: intro_x1=1400
             if intro_x2<-1400: intro_x2=0
+            asteroid1.draw(Main_surf)
+            asteroid1.update(2,2)
             Main_surf.blit(intro_msg_1,intro_msg_rect1)
             Main_surf.blit(intro_msg_2,intro_msg_rect2)
             pygame.draw.rect(Main_surf,(255,0,100),Start_button_rect,2)
@@ -292,8 +279,6 @@ if __name__=='__main__':
                 bg_music_play0.play(loops = -1)
                 bg_music0+=1
 
-            asteroid1.draw(Main_surf)
-            asteroid1.update(2,2)
 
             #spaceship move weird animation
             x_sine = pygame.time.get_ticks() / 5  % 1400
@@ -301,6 +286,7 @@ if __name__=='__main__':
             Main_surf.blit(spaceship_show,(x_sine,y_sine))
 
         elif game_event==1:
+    
             #background animation for level1
             Main_surf.blit(scrn1,(0,intro_y1))
             Main_surf.blit(scrn1,(0,intro_y2))
@@ -316,8 +302,11 @@ if __name__=='__main__':
 
             asteroid2.draw(Main_surf)
             asteroid2.update(0,3)
+            garbage.draw(Main_surf)
+            garbage.update(0,randint(0,3))
 
-            score_disp()  
+    
+            score_disp()
             game.run_ep()
 
         pygame.display.update()
