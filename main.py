@@ -1,3 +1,4 @@
+from gc import garbage
 import pygame, sys, math
 from random import randint
 import numpy as np
@@ -94,7 +95,7 @@ class EnemyPlayer(pygame.sprite.Sprite):
 class Laser(pygame.sprite.Sprite):
 	def __init__(self,pos,speed):
 		super().__init__()
-		self.image = pygame.Surface((4,20))
+		self.image = pygame.Surface((10,50))
 		self.image.fill('white')
 		self.rect = self.image.get_rect(center = pos)
 		self.speed = speed
@@ -125,6 +126,43 @@ class asteroid(pygame.sprite.Sprite):
         if self.rect.y >= 900:
              self.kill()
 
+class Garbage(pygame.sprite.Sprite):
+    def __init__(self,type):
+        garbage_index=randint(0,3)
+        garbage_list=['banana','paper','trash','Metal']
+        garbage=garbage_list[garbage_index]
+        super().__init__()
+        self.image=pygame.image.load(f'Images\\{garbage}.png')
+        self.rect = self.image.get_rect(midbottom = (randint(200,1400),0))
+
+    def update(self,spx,spy):
+        self.rect.x -= spx
+        self.rect.y += spy
+        self.destroy()
+    
+    def destroy(self):
+        if self.rect.x <= -100: 
+             self.kill()    
+        if self.rect.y >= 900:
+             self.kill()
+
+    def __init__(self):
+        super().__init__()
+        self.image=pygame.image.load('Images\\asteroid1.png')
+        self.rect = self.image.get_rect(midbottom = (randint(200,1400),0))
+
+    def update(self,spx,spy):
+        self.rect.x -= spx
+        self.rect.y += spy
+        self.destroy()
+    
+    def destroy(self):
+        if self.rect.x <= -100: 
+             self.kill()    
+        if self.rect.y >= 900:
+             self.kill()
+
+
 class Game:
     def __init__(self):
         player1_ship=Player((700,300))
@@ -152,12 +190,13 @@ if __name__=='__main__':
     bg_music = pygame.mixer.Sound('audio\\music.mp3')
     bg_music.play(loops = -1)
     clock = pygame.time.Clock()
+    start_time=0
     game_event=0
-    a=0
-    b=1
+    intro_load=1
+    connection_=0
     game=Game()
 
-    if a==0:
+    if intro_load==1:
         intro_scrn=pygame.image.load('Images\\Space Background 1.png').convert_alpha()
         intro_x1=1400
         intro_x2=0
@@ -172,17 +211,17 @@ if __name__=='__main__':
         connect1_rect=connect1.get_rect(center=(300,600))
         connect1_text=font_20.render('Connection 1', False, 'Green')
         connect1_text_rect=connect1_text.get_rect(center=(300,700))
-        if b==1: 
+        if connection_==1: 
             connect1=pygame.image.load('Images\\connected.png').convert_alpha()
         connect2=pygame.image.load('Images\\disconnect.png').convert_alpha()
         connect2_rect=connect2.get_rect(center=(1100,600))
         connect2_text=font_20.render('Connection 2', False, 'Green')
         connect2_text_rect=connect1_text.get_rect(center=(1100,700))
-        if b==1: 
+        if connection_==1: 
             connect2=pygame.image.load('Images\\connected.png').convert_alpha()
 
-
     asteroid1=pygame.sprite.Group()
+    asteroid2=pygame.sprite.Group()
     astrid_timer=pygame.USEREVENT + 1
     pygame.time.set_timer(astrid_timer,randint(1000,2500))
 
@@ -212,9 +251,7 @@ if __name__=='__main__':
             
             elif game_event==1:
                 if event.type==astrid_timer:
-                    asteroid1.add(asteroid())
-
-            else: a=1
+                    asteroid2.add(asteroid())
                 
         
         if game_event==0:
@@ -252,11 +289,9 @@ if __name__=='__main__':
             if intro_y1>750: intro_y1=-750
             if intro_y2>750: intro_y2=-750
 
-            def score_disp():
-                score=int(pygame.time.get_ticks()/1000)-start_time
-                Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
-                Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
-                Main_surf.blit(Score_msg,Score_msg_rect)
+            asteroid2.draw(Main_surf)
+            asteroid2.update(0,3)
+
             score_disp()  
 
             game.run_ep()
