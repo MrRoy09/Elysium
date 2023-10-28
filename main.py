@@ -2,27 +2,6 @@ import pygame, sys, math
 from random import randint
 import numpy as np
 
-class EnemyPlayer(pygame.sprite.Sprite):
-    def __init__(self,pos):
-        super().__init__()
-        self.image=pygame.image.load('Images\\ship2.png')
-        self.rect=self.image.get_rect(center=pos)
-
-    def player_input(self):
-        Keys = pygame.key.get_pressed()
-        if Keys[pygame.K_d]:
-            self.rect.x += 10
-        elif Keys[pygame.K_a]:
-            self.rect.x -= 10
-
-    def player_movement(self):
-        if self.rect.left<=0:self.rect.left=0
-        if self.rect.right>=1400:self.rect.right=1400       
-
-    def update(self):
-        self.player_input()
-        self.player_movement()
-
 class Player (pygame.sprite.Sprite):
     def __init__(self,pos):
         super().__init__()
@@ -43,6 +22,27 @@ class Player (pygame.sprite.Sprite):
     def update(self):
         self.player_input()
         self.mov_const()
+
+class EnemyPlayer(pygame.sprite.Sprite):
+    def __init__(self,pos):
+        super().__init__()
+        self.image=pygame.image.load('Images\\ship2.png')
+        self.rect=self.image.get_rect(center=pos)
+
+    def player_input(self):
+        Keys = pygame.key.get_pressed()
+        if Keys[pygame.K_d]:
+            self.rect.x += 10
+        elif Keys[pygame.K_a]:
+            self.rect.x -= 10
+
+    def player_movement(self):
+        if self.rect.left<=0:self.rect.left=0
+        if self.rect.right>=1400:self.rect.right=1400       
+
+    def update(self):
+        self.player_input()
+        self.player_movement()
 
 class asteroid(pygame.sprite.Sprite):
     def __init__(self):
@@ -72,14 +72,12 @@ class Game:
         player2_ship=EnemyPlayer((700,700))
         self.player2=pygame.sprite.GroupSingle(player2_ship)
 
-    
-
     def score_disp(self):
         score=int(pygame.time.get_ticks()/1000)-start_time
         Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
         Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
         Main_surf.blit(Score_msg,Score_msg_rect)
-        
+
     def run(self): 
         self.player1.update()
         self.player1.draw(Main_surf)
