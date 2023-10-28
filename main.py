@@ -1,3 +1,4 @@
+from typing import Self
 import pyautogui
 import pygame, sys, math
 from random import randint
@@ -43,8 +44,17 @@ class Player (pygame.sprite.Sprite):
         if self.rect.left<=0: self.rect.left=0
 
      def mov_forward(self):
-        pass
-         
+        global game_event
+        start_tim = 0
+        start_val = int(pygame.time.get_ticks() / 1000) - start_tim
+        if self.rect.top <= 0:
+            print("Game over")
+            game_event=2
+        if start_val >= 10 and start_val <= 12:
+            self.rect.top -= 0.6
+        elif start_val > 12:
+            start_tim=start_val
+
 
      def update(self):
         self.mov_forward()
@@ -172,18 +182,12 @@ class Game:
         self.playerep.update()
         self.playerep.draw(Main_surf)
         self.playerep.sprite.lasers.draw(Main_surf)
+        
+        
+        
+        
 
-        collided1 = pygame.sprite.spritecollide(self.playermp.sprite, asteroid1, dokill=False)
-        collided2 = pygame.sprite.spritecollide(self.playermp.sprite, asteroid2, dokill=False)
-        collided3= pygame.sprite.spritecollide(self.playermp.sprite, garbage, dokill=False)
-        collided4 = pygame.sprite.spritecollide(self.playerep.sprite, asteroid1, dokill=False)
-        collided5 = pygame.sprite.spritecollide(self.playerep.sprite, asteroid2, dokill=False)
-        collided6= pygame.sprite.spritecollide(self.playerep.sprite,garbage,dokill=False)
-        collided7= pygame.sprite.spritecollide(self.playermp.sprite,EnemyPlayer.lasers,dokill=False)
 
-        #if collided1 or collided2 or collided3 or collided4 or collided5 or collided6:
-        if collided7:
-            print("collision detected")
 
 
     
@@ -198,6 +202,7 @@ if __name__=='__main__':
     font_60=pygame.font.Font('pixel.ttf',60)
     bg_music0=0
     bg_music1=0
+    bg_music2=0
     clock = pygame.time.Clock()
     start_time=0
     game_event=0
@@ -247,6 +252,10 @@ if __name__=='__main__':
         Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
         Main_surf.blit(Score_msg,Score_msg_rect)
 
+    #gameover screen
+    game_over_text=font_60.render('GAME OVER', False, 'Red')
+    game_over_text_rect=game_over_text.get_rect(center=(700,400))
+
 
     while True:
         for event in pygame.event.get():
@@ -266,7 +275,7 @@ if __name__=='__main__':
                     asteroid2.add(asteroid())
                 if event.type==garbage_timer:
                     garbage.add(Garbage())
-
+                
 
         if game_event==0:
             #background animations
@@ -298,7 +307,7 @@ if __name__=='__main__':
             Main_surf.blit(spaceship_show,(x_sine,y_sine))
 
         elif game_event==1:
-    
+            
             #background animation for level1
             Main_surf.blit(scrn1,(0,intro_y1))
             Main_surf.blit(scrn1,(0,intro_y2))
@@ -317,10 +326,20 @@ if __name__=='__main__':
             garbage.draw(Main_surf)
             garbage.update(0,randint(0,3))
 
-
-    
             score_disp()
             game.run_ep()
+            
+            
+        elif game_event==2:
+            Main_surf.fill('black')
+            Main_surf.blit(game_over_text,game_over_text_rect)
+            if bg_music2==0:
+                bg_music_play2 = pygame.mixer.Sound('audio\\game_over.mp3')
+                bg_music_play1.fadeout(200)
+                bg_music_play2.play(loops = -1)
+                bg_music2+=1
+
+        
 
         pygame.display.update()
         clock.tick(60)
