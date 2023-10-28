@@ -7,6 +7,12 @@ class Player (pygame.sprite.Sprite):
         super().__init__()
         self.image=pygame.image.load('Images\\ship1.png')
         self.rect=self.image.get_rect(center=pos)
+        self.ready = True
+        self.laser_time = 0
+        self.laser_cooldown = 600
+
+        self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
+        self.laser_sound.set_volume(0.5)
     
     def player_input(self):
         Keys = pygame.key.get_pressed()
@@ -14,7 +20,16 @@ class Player (pygame.sprite.Sprite):
             self.rect.x += 10
         elif Keys[pygame.K_LEFT]:
             self.rect.x -= 10
+
+        if Keys[pygame.K_SPACE]:
+            self.laser_shoot()
+            self.ready = False
+            self.laser_time = pygame.time.get_ticks()
+            self.laser_sound.play()
     
+    def laser_shoot(self):
+        self.lasers.add(Laser(self.rect.center,-8))
+
     def mov_const(self):
         if self.rect.right<=1400: self.rect.right=1400
         if self.rect.left>=0: self.rect.right=0
@@ -26,23 +41,64 @@ class Player (pygame.sprite.Sprite):
 class EnemyPlayer(pygame.sprite.Sprite):
     def __init__(self,pos):
         super().__init__()
-        self.image=pygame.image.load('Images\\ship2.png')
+        self.image=pygame.image.load('Images\\ship1.png')
         self.rect=self.image.get_rect(center=pos)
+        self.ready = True
+        self.laser_time = 0
+        self.laser_cooldown = 600
 
+        self.lasers = pygame.sprite.Group()
+        self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
+        self.laser_sound.set_volume(0.5)
+    
     def player_input(self):
         Keys = pygame.key.get_pressed()
-        if Keys[pygame.K_d]:
+        if Keys[pygame.K_a]:
             self.rect.x += 10
-        elif Keys[pygame.K_a]:
+        elif Keys[pygame.K_d]:
             self.rect.x -= 10
 
-    def player_movement(self):
-        if self.rect.left<=0:self.rect.left=0
-        if self.rect.right>=1400:self.rect.right=1400       
+        if Keys[pygame.K_SPACE]:
+            self.laser_shoot()
+            self.ready = False
+            self.laser_time = pygame.time.get_ticks()
+            self.laser_sound.play()
+    
+    def recharge(self):
+        if not self.ready:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.laser_time >= self.laser_cooldown:
+                 self.ready = True
+    
+    def laser_shoot(self):
+        self.lasers.add(Laser(self.rect.center,-8))
+
+    def mov_const(self):
+        if self.rect.right<=1400: self.rect.right=1400
+        if self.rect.left>=0: self.rect.right=0
 
     def update(self):
         self.player_input()
-        self.player_movement()
+        self.mov_const()
+        self.recharge()
+        self.lasers.update()
+
+class Laser(pygame.sprite.Sprite):
+	def __init__(self,pos,speed):
+		super().__init__()
+		self.image = pygame.Surface((4,20))
+		self.image.fill('white')
+		self.rect = self.image.get_rect(center = pos)
+		self.speed = speed
+		self.height_y_constraint = 750
+
+	def destroy(self):
+		if self.rect.y <= -50 or self.rect.y >= self.height_y_constraint + 50:
+			self.kill()
+
+	def update(self):
+		self.rect.y += self.speed
+		self.destroy()
 
 class asteroid(pygame.sprite.Sprite):
     def __init__(self):
@@ -70,12 +126,6 @@ class Game:
         self.playermp=pygame.sprite.GroupSingle(player1_ship)
         player2_ship=EnemyPlayer((700,700))
         self.playerep=pygame.sprite.GroupSingle(player2_ship)
-
-    def score_disp(self):
-        score=int(pygame.time.get_ticks()/1000)-start_time
-        Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
-        Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
-        Main_surf.blit(Score_msg,Score_msg_rect)
 
     def run_mp(self): 
         self.playermp.update()
@@ -120,12 +170,14 @@ if __name__=='__main__':
     connect1_rect=connect1.get_rect(center=(300,600))
     connect1_text=font_20.render('Connection 1', False, 'Green')
     connect1_text_rect=connect1_text.get_rect(center=(300,700))
-    if a==1: connect1=pygame.image.load('Images\\connected.png').convert_alpha()
+    if a==1: 
+        connect1=pygame.image.load('Images\\connected.png').convert_alpha()
     connect2=pygame.image.load('Images\\disconnect.png').convert_alpha()
     connect2_rect=connect2.get_rect(center=(1100,600))
     connect2_text=font_20.render('Connection 2', False, 'Green')
     connect2_text_rect=connect1_text.get_rect(center=(1100,700))
-    if a==1: connect1=pygame.image.load('Images\\connected.png').convert_alpha()
+    if a==1: 
+        connect1=pygame.image.load('Images\\connected.png').convert_alpha()
 
 
     asteroid1=pygame.sprite.Group()
@@ -198,6 +250,13 @@ if __name__=='__main__':
             intro_y2+=2
             if intro_y1>750: intro_y1=-750
             if intro_y2>750: intro_y2=-750
+
+            def score_disp():
+                score=int(pygame.time.get_ticks()/1000)-start_time
+                Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
+                Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
+                Main_surf.blit(Score_msg,Score_msg_rect)
+            score_disp()   
 
             game.run_mp() 
             game.run_ep()
