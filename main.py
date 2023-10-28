@@ -51,23 +51,18 @@ class asteroid(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image=pygame.image.load('Images\\asteroid1.png')
-        self.rect=self.image.get_rect(topleft=(700,200))
-    
-    def asteroid_movement(self,x,y):
-        self.rect.x += x
-        self.rect.y += y
-        if self.rect.left==1450: 
-            self.rect.right=0
-        if self.rect.right==-50:
-            self.rect.left=1400
-        if self.rect.top==750:
-            self.rect.bottom=50
-        if self.rect.bottom==0:
-            self.rect.top=730
-        
+        self.rect = self.image.get_rect(midbottom = (randint(200,1400),0))
 
-    def update(self,x,y):
-        self.asteroid_movement(x,y)
+    def update(self,spx,spy):
+        self.rect.x -= spx
+        self.rect.y += spy
+        self.destroy()
+    
+    def destroy(self):
+        if self.rect.x <= -100: 
+             self.kill()    
+        if self.rect.y >= 900:
+             self.kill()
 
 
 #setting the screen up, logo, font, music
@@ -82,6 +77,8 @@ bg_music = pygame.mixer.Sound('audio\\music.mp3')
 bg_music.play(loops = -1)
 clock = pygame.time.Clock()
 game_event=0
+a=0
+
 
 #intro screen setup
 intro_scrn=pygame.image.load('Images\\Space Background 1.png').convert_alpha()
@@ -94,6 +91,21 @@ intro_msg_rect2=intro_msg_2.get_rect(center=(700,150))
 Start_button=font_40.render('press space to begin', False, (255,0,100))
 Start_button_rect=Start_button.get_rect(center=(700,400))
 spaceship_show=pygame.image.load('Images\\sma.png').convert_alpha()
+connect1=pygame.image.load('Images\\disconnect.png').convert_alpha()
+connect1_rect=connect1.get_rect(center=(300,600))
+connect1_text=font_20.render('Connection 1', False, 'Green')
+connect1_text_rect=connect1_text.get_rect(center=(300,700))
+if a==1: connect1=pygame.image.load('Images\\connected.png').convert_alpha()
+connect2=pygame.image.load('Images\\disconnect.png').convert_alpha()
+connect2_rect=connect2.get_rect(center=(1100,600))
+connect2_text=font_20.render('Connection 2', False, 'Green')
+connect2_text_rect=connect1_text.get_rect(center=(1100,700))
+if a==1: connect1=pygame.image.load('Images\\connected.png').convert_alpha()
+
+
+asteroid1=pygame.sprite.Group()
+astrid_timer=pygame.USEREVENT + 1
+pygame.time.set_timer(astrid_timer,randint(1000,2500))
 
 #playing screen1 setup
 scrn1=pygame.image.load('Images\\Space Background 2.png').convert_alpha()
@@ -108,20 +120,10 @@ player1_ship=pygame.sprite.GroupSingle()
 player1_ship.add(Player())
 player2_ship=pygame.sprite.GroupSingle()
 player2_ship.add(EnemyPlayer())
-asteroid1=pygame.sprite.Group()
-asteroid1.add(asteroid())
-asteroid2=pygame.sprite.Group()
-asteroid2.add(asteroid())
 
 
 
 start_time=0
-
-
-x1=randint(-5,5)
-y1=randint(-5,5)
-x2=randint(-5,5)
-y2=randint(-5,5)
 
 
 while True:
@@ -134,11 +136,17 @@ while True:
             if event.type==pygame.KEYDOWN and event.key==pygame.K_SPACE:
                     game_event=1
                     start_time=int(pygame.time.get_ticks()/1000) 
+            if event.type==astrid_timer:
+                asteroid1.add(asteroid())
+        
+        elif game_event==1:
+             if event.type==astrid_timer:
+                asteroid1.add(asteroid())
+
         else: a=1
             
      
     if game_event==0:
-        
         #background animations
         Main_surf.blit(intro_scrn,(intro_x1,0))
         Main_surf.blit(intro_scrn,(intro_x2,0))
@@ -150,20 +158,20 @@ while True:
         Main_surf.blit(intro_msg_2,intro_msg_rect2)
         pygame.draw.rect(Main_surf,(255,0,100),Start_button_rect,2)
         Main_surf.blit(Start_button,Start_button_rect)
-        
+        Main_surf.blit(connect1,connect1_rect)
+        Main_surf.blit(connect2,connect2_rect)
+        Main_surf.blit(connect1_text,connect1_text_rect)
+        Main_surf.blit(connect2_text,connect2_text_rect)
+
         
         asteroid1.draw(Main_surf)
-        asteroid1.update(x1,y1)
-        asteroid2.draw(Main_surf)
-        asteroid2.update(x2,y2)
+        asteroid1.update(2,2)
 
         #spaceship move weird animation
         x_sine = pygame.time.get_ticks() / 5  % 1400
         y_sine = int(math.sin(x_sine/50.0) * 50 + 400)  
         Main_surf.blit(spaceship_show,(x_sine,y_sine))
 
-
-        
 
     elif game_event==1:
         #background animation for level1
@@ -178,14 +186,11 @@ while True:
         player1_ship.update()
         player2_ship.draw(Main_surf)
         player2_ship.update()
+
         asteroid1.draw(Main_surf)
-        asteroid1.update(x1,y1)
-        asteroid2.draw(Main_surf)
-        asteroid2.update(x2,y2)
+        asteroid1.update(0,3)
+
         score_disp()
-
-
-
 
     pygame.display.update()
     clock.tick(60)
