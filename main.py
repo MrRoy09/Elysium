@@ -1,7 +1,7 @@
 from gc import garbage
 import pygame, sys, math
 from random import randint
-import numpy as np
+
 
 class Player (pygame.sprite.Sprite):
      def __init__(self,pos):
@@ -92,7 +92,7 @@ class EnemyPlayer(pygame.sprite.Sprite):
         self.recharge()
         self.lasers.update()
 
-class Laser(pygame.sprite.Sprite):
+class Laser(pygame.sprite.Sprite): 
 	def __init__(self,pos,speed):
 		super().__init__()
 		self.image = pygame.Surface((10,50))
