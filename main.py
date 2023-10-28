@@ -62,10 +62,10 @@ class asteroid(pygame.sprite.Sprite):
              self.kill()
 
 class Game:
-    
     intro_y1=-750
     intro_y2=0
-
+    start_time=0
+    
     def __init__(self):
         player1_ship=Player((700,300))
         self.player1=pygame.sprite.GroupSingle(player1_ship)
@@ -80,14 +80,14 @@ class Game:
         if intro_y1>750: intro_y1=-750
         if intro_y2>750: intro_y2=-750
 
-    def score_disp():
+    '''def score_disp(self):
         score=int(pygame.time.get_ticks()/1000)-start_time
         Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
         Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
         Main_surf.blit(Score_msg,Score_msg_rect)
-
+'''
     def run(self):
-        self.score_disp()
+        self.background()
         self.player1.update()
         self.player1.draw(Main_surf)
         self.player2.update()
@@ -150,9 +150,6 @@ if __name__=='__main__':
         Score_msg=font_20.render(f'Timer:{score}', False, 'Green')
         Score_msg_rect=Score_msg.get_rect(bottomleft=(100,50))
         Main_surf.blit(Score_msg,Score_msg_rect)
-
-
-    start_time=0
 
 
     while True:
