@@ -412,6 +412,8 @@ def initFunction():
                     garbage.add(Garbage())
 
             elif game_event == 2:
+                global score1
+                global score2
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     asteroid2.remove(asteroid2.sprites())
                     garbage.remove(garbage.sprites())
@@ -419,6 +421,8 @@ def initFunction():
                     lasers_g2.remove(lasers_g2.sprites())
                     game_event = 1
                     start_time = int(pygame.time.get_ticks() / 1000)
+                    score1=0
+                    score2=0
 
 
         if game_event == 0:
