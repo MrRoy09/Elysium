@@ -14,7 +14,7 @@ Handling data from two users at once
 ,Optimizing raw sensor data to provide smooth motion
 ,Optimizing game logic for multiplayer
 
-Most of the bugs were hard to debug due to the multiple running threads. We were only successful in creating a native react app that reads sensor data. Unfortunately we had to use a third party sensor app because our android app was not able to send data through sockets. We have uploaded the .apk file for our android gyroscope sensor app.
+Most of the bugs were hard to debug due to the multiple running threads. We were only successful in creating a native react app that reads sensor data. Unfortunately we had to use a third party sensor app because our android app was not able to send data through sockets.
 
 
 
