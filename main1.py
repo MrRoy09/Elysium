@@ -62,7 +62,8 @@ def client2_handler(client2):
 class Player (pygame.sprite.Sprite):
      def __init__(self,pos):
         super().__init__()
-        self.image=pygame.image.load('Images\\ship1.png')
+        ship_list=['ship1','ship2','ship3','ship4','ship5']
+        self.image=pygame.image.load(f'Images\\{ship_list[randint(0,4)]}.png').convert_alpha()
         self.rect=self.image.get_rect(center=pos)
         self.ready = True
         self.laser_time = 0
@@ -118,12 +119,12 @@ class Player (pygame.sprite.Sprite):
         self.mov_const()
         self.recharge()
         self.lasers.update()
-
-    
+ 
 class EnemyPlayer(pygame.sprite.Sprite):
     def __init__(self,pos):
         super().__init__()
-        self.image=pygame.image.load('Images\\ship2.png')
+        ship_list=['ship1','ship2','ship3','ship4','ship5']
+        self.image=pygame.image.load(f'Images\\{ship_list[randint(0,4)]}.png').convert_alpha()
         self.rect=self.image.get_rect(center=pos)
         self.ready = True
         self.laser_time = 0
@@ -309,7 +310,6 @@ def initFunction():
     game_event = 0
     player_event = 0
     intro_load = 1
-    connection_ = 0
     game = Game()
 
     if intro_load == 1:
@@ -364,8 +364,6 @@ def initFunction():
 
 
     while True:
-
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

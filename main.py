@@ -7,7 +7,8 @@ pygame.init()
 class Player (pygame.sprite.Sprite):
      def __init__(self,pos):
         super().__init__()
-        self.image=pygame.image.load('Images\\ship1.png')
+        ship_list=['ship1','ship2','ship3','ship4','ship5']
+        self.image=pygame.image.load(f'Images\\{ship_list[randint(0,4)]}.png').convert_alpha()
         self.rect=self.image.get_rect(center=pos)
         self.ready = True
         self.laser_time = 0
@@ -65,7 +66,8 @@ class Player (pygame.sprite.Sprite):
 class EnemyPlayer(pygame.sprite.Sprite):
     def __init__(self,pos):
         super().__init__()
-        self.image=pygame.image.load('Images\\ship2.png')
+        ship_list=['ship1','ship2','ship3','ship4','ship5']
+        self.image=pygame.image.load(f'Images\\{ship_list[randint(0,4)]}.png').convert_alpha()
         self.rect=self.image.get_rect(center=pos)
         self.ready = True
         self.laser_time = 0
@@ -192,10 +194,6 @@ class Game:
         if collided2 or collided5:
             game_event=2
         
-
-
-
-
     
 if __name__=='__main__':
     #setting the screen up, logo, font, music
