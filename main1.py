@@ -38,7 +38,7 @@ def client1_handler(client1):
 
         try:
             data= eval(client1.recv(1024).decode())[sensor1]
-            print(data[1])
+            print(data)
 
 
 
@@ -99,9 +99,11 @@ class Player (pygame.sprite.Sprite):
 
      def mov_forward(self):
         global game_event
+        global player_event
         start_val = int(pygame.time.get_ticks() / 1000)
         if self.rect.top <= 0:
             game_event=2
+            player_event = 2
         if start_val >= 10 and start_val <= 12:
             self.rect.top -= 0.6
         elif start_val >= 22 and start_val <= 24:
@@ -237,7 +239,6 @@ class Game:
     def run_ep(self,x1,x2,y1,y2):
         global game_event
         global player_event
-        player_event = 0
         self.playermp.update(x1,y1)
         self.playermp.draw(Main_surf)
         self.playermp.sprite.lasers.draw(Main_surf)
@@ -253,29 +254,32 @@ class Game:
         collided4= pygame.sprite.spritecollide(self.playerep.sprite,garbage,dokill=False)
         #collided5 = pygame.sprite.spritecollide(garbage.sprites,lasers_g2,dokill=False)
         #collided6 = pygame.sprite.spritecollide(garbage.sprites, lasers_g1, dokill=False)
-        if collided1 or collided3:
-            print("collision")
+        if collided1:
             game_event=2
-            player_event = 0
+            player_event = 2
+        if collided3:
+            game_event = 2
+            player_event = 1
         for i in garbage.sprites():
             if pygame.sprite.spritecollide(i, lasers_g2, dokill=True) or pygame.sprite.spritecollide(i, lasers_g1,dokill=True):
                 garbage.remove(i)
-        #if collided2:
-            #count1 = 1
-            #if count1 == 0.5:
-                #game_event == 2
-                #player_event = 1
-            #count1 -= 0.5
+        if collided2:
+            count1 = 1
+            if count1 == 0.5:
+                game_event = 2
+                player_event = 1
+            count1 -= 0.5
 
-        #if collided4:
-            #count2 = 1
-            #if count2 == 0.5:
-                #game_event == 2
-                #player_event = 2
-            #count2 -= 0.5
+        if collided4:
+            count2 = 1
+            if count2 == 0.5:
+                game_event = 2
+                player_event = 2
+            count2 -= 0.5
         if colid_laser1:
             print("collison is working")
             game_event=2
+            player_event = 2
 
 
 def initFunction():
@@ -288,6 +292,7 @@ def initFunction():
     global connect1
     global connect2
     global game_event
+    global player_event
     Main_surf = pygame.display.set_mode((1400, 750))
 
     pygame.display.set_caption('Star wars ripoff')
@@ -302,6 +307,7 @@ def initFunction():
     clock = pygame.time.Clock()
     start_time = 0
     game_event = 0
+    player_event = 0
     intro_load = 1
     connection_ = 0
     game = Game()
@@ -425,7 +431,7 @@ def initFunction():
             garbage.draw(Main_surf)
             garbage.update(0, randint(0, 3))
 
-            x1 = (data[1]+12)*0.28
+            x1 = (data[1]+12)*0.25
             x2 = (data2[1]-8)*0.3
             y1=data[2]
             y2=data2[2]
@@ -433,12 +439,13 @@ def initFunction():
             game.run_ep(x1, x2,y1,y2)
 
         elif game_event==2:
+
             Main_surf.fill('black')
             if player_event == 0:
                 Main_surf.blit(game_over_text,game_over_text_rect)
-            elif player_event == 1:
-                Main_surf.blit(enemy_wins, enemy_wins_rect)
             elif player_event == 2:
+                Main_surf.blit(enemy_wins, enemy_wins_rect)
+            elif player_event == 1:
                 Main_surf.blit(player_wins, player_wins_rect)
             if bg_music2==0:
                 bg_music_play2 = pygame.mixer.Sound('audio\\game_over.mp3')
