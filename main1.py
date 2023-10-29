@@ -12,7 +12,7 @@ master_dict={}
 s = socket(AF_INET, SOCK_STREAM)
 print("socket created")
 port = 9999
-s.bind(('192.168.250.177', port))
+s.bind(('192.168.250.85', port))
 
 
 def accept_client_connections():
@@ -107,10 +107,11 @@ class Player (pygame.sprite.Sprite):
             player_event = 2
         if start_val >= 10 and start_val <= 12:
             self.rect.top -= 0.6
-        elif start_val >= 22 and start_val <= 24:
-            self.rect.top -= 0.6
+        elif start_val >= 22 and start_val <= 23:
+            self.rect.top += 0.6
         elif start_val >= 34 and start_val <= 36:
             self.rect.top -= 0.6
+        
          
 
      def update(self,x,y):
@@ -230,39 +231,36 @@ class Game:
     def __init__(self):
         global lasers_g1
         global lasers_g2
-        self.lives = 3
-        self.live_surf = pygame.image.load('Images\\ship2.png').convert_alpha()
-        self.live_x_start_pos = 600 - (self.live_surf.get_size()[0]*2+20)
+        global score1
+        global score2
         self.player1_ship=Player((300,500))
         self.playermp=pygame.sprite.GroupSingle(self.player1_ship)
         self.player2_ship=EnemyPlayer((1000,700))
         self.playerep=pygame.sprite.GroupSingle(self.player2_ship)
-        lasers_g1=self.player1_ship.lasers
+        lasers_g1 = self.player1_ship.lasers
         lasers_g2 = self.player2_ship.lasers
-
-    def show_lives(self):
-        for live in range(self.lives - 1):
-            x = self.live_x_start_pos + (live * (self.live_surf.get_size()[0]+10))
-            Main_surf.blit(self.live_surf,(x,8))
+        score1=0
+        score2=0
 
 
     def run_ep(self,x1,x2,y1,y2):
         global game_event
         global player_event
+        global score1
+        global score2
         self.playermp.update(x1,y1)
         self.playermp.draw(Main_surf)
         self.playermp.sprite.lasers.draw(Main_surf)
         self.playerep.update(x2,y2)
         self.playerep.draw(Main_surf)
         self.playerep.sprite.lasers.draw(Main_surf)
+
         colid_laser1=pygame.sprite.spritecollide(self.playermp.sprite, lasers_g2,dokill=False)
 
-
         collided1 = pygame.sprite.spritecollide(self.playermp.sprite, asteroid2, dokill=False)
-        collided2= pygame.sprite.spritecollide(self.playermp.sprite, garbage, dokill=False)
+        collided2 = pygame.sprite.spritecollide(self.playermp.sprite, garbage, dokill=False)
         collided3 = pygame.sprite.spritecollide(self.playerep.sprite, asteroid2, dokill=False)
-        collided4= pygame.sprite.spritecollide(self.playerep.sprite,garbage,dokill=False)
-    
+        collided4 = pygame.sprite.spritecollide(self.playerep.sprite,garbage,dokill=False)
         if collided1:
             game_event=2
             player_event = 2
@@ -270,22 +268,24 @@ class Game:
             game_event = 2
             player_event = 1
         for i in garbage.sprites():
-            if pygame.sprite.spritecollide(i, lasers_g2, dokill=True) or pygame.sprite.spritecollide(i, lasers_g1,dokill=True):
+            if pygame.sprite.spritecollide(i, lasers_g1, dokill=True):
                 garbage.remove(i)
-        for j in garbage.sprites():
-            if collided2:
-                garbage.remove(j)
-                self.lives -= 1
-                if self.lives <= 0:
-                    game_event = 2
-                    player_event=1
-        for k in garbage.sprites():
-            if collided4:
-                garbage.remove(k)
-                self.lives -= 1
-                if self.lives <= 0:
-                    game_event = 2
-                    player_event=2
+                score1+=1
+            if pygame.sprite.spritecollide(i, lasers_g2,dokill=True):
+                garbage.remove(i)
+                score2+=1
+        if collided2:
+            count1 = 1
+            if count1 == 0.5:
+                game_event = 2
+                player_event = 1
+            count1 -= 0.5
+        if collided4:
+            count2 = 1
+            if count2 == 0.5:
+                game_event = 2
+                player_event = 2
+            count2 -= 0.5
         if colid_laser1:
             print("collison is working")
             game_event=2
@@ -358,18 +358,34 @@ def initFunction():
     intro_y2 = 0
 
     #gameover screen
-    game_over_text=font_60.render('GAME OVER', False, 'Red')
-    game_over_text_rect=game_over_text.get_rect(center=(700,400))
-    player_wins = font_60.render('PLAYER WINS', False, 'Red')
+    game_over_text=font_40.render('GAME OVER', False, 'White')
+    game_over_text_rect=game_over_text.get_rect(center=(700,500))
+    player_wins = font_60.render('PLAYER WINS', False, 'White')
     player_wins_rect = player_wins.get_rect(center=(700, 400))
-    enemy_wins = font_60.render('ENEMY WINS', False, 'Red')
+    enemy_wins = font_60.render('ENEMY WINS', False, 'White')
     enemy_wins_rect = enemy_wins.get_rect(center=(700, 400))
 
+    def timer_disp():
+        timer = int(pygame.time.get_ticks() / 1000) - start_time
+        timer_msg = font_20.render(f'Timer:{timer}', False, 'Green')
+        timer_msg_rect = timer_msg.get_rect(bottomleft=(100, 50))
+        Main_surf.blit(timer_msg, timer_msg_rect)
+
     def score_disp():
-        score = int(pygame.time.get_ticks() / 1000) - start_time
-        Score_msg = font_20.render(f'Timer:{score}', False, 'Green')
-        Score_msg_rect = Score_msg.get_rect(bottomleft=(100, 50))
-        Main_surf.blit(Score_msg, Score_msg_rect)
+        Player_Score_msg = font_20.render(f'Player Score: {score1}', False, 'Blue')
+        Player_Score_msg_rect = Player_Score_msg.get_rect(bottomleft=(500, 50))
+        Main_surf.blit(Player_Score_msg, Player_Score_msg_rect)
+        Enemy_Score_msg = font_20.render(f'Enemy Score: {score2}', False, 'red')
+        Enemy_Score_msg_rect = Player_Score_msg.get_rect(bottomleft=(1000, 50))
+        Main_surf.blit(Enemy_Score_msg, Enemy_Score_msg_rect)
+    
+    def final_score():
+        Player_Score_msg = font_20.render(f'Player Score: {score1}', False, 'Blue')
+        Player_Score_msg_rect = Player_Score_msg.get_rect(bottomleft=(300, 100))
+        Main_surf.blit(Player_Score_msg, Player_Score_msg_rect)
+        Enemy_Score_msg = font_20.render(f'Enemy Score: {score2}', False, 'red')
+        Enemy_Score_msg_rect = Player_Score_msg.get_rect(bottomleft=(850, 100))
+        Main_surf.blit(Enemy_Score_msg, Enemy_Score_msg_rect)
 
 
     while True:
@@ -443,23 +459,26 @@ def initFunction():
             x2 = (data2[1]-8)*0.3
             y1=data[2]
             y2=data2[2]
+            timer_disp()
             score_disp()
             game.run_ep(x1, x2,y1,y2)
 
         elif game_event==2:
 
             Main_surf.fill('black')
-            if player_event == 0:
-                Main_surf.blit(game_over_text,game_over_text_rect)
-            elif player_event == 2:
+            if player_event == 2:
                 Main_surf.blit(enemy_wins, enemy_wins_rect)
+                Main_surf.blit(game_over_text,game_over_text_rect)
             elif player_event == 1:
                 Main_surf.blit(player_wins, player_wins_rect)
+                Main_surf.blit(game_over_text,game_over_text_rect)
             if bg_music2==0:
                 bg_music_play2 = pygame.mixer.Sound('audio\\game_over.mp3')
                 bg_music_play1.fadeout(200)
                 bg_music_play2.play(loops = -1)
                 bg_music2+=1
+            final_score()
+
         pygame.display.update()
         clock.tick(60)
 
