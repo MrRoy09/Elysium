@@ -322,7 +322,7 @@ def initFunction():
         intro_msg_rect2 = intro_msg_2.get_rect(center=(700, 150))
         Start_button = font_40.render('press space to begin', False, (255, 0, 100))
         Start_button_rect = Start_button.get_rect(center=(700, 400))
-        spaceship_show = pygame.image.load('Images\\sma.png').convert_alpha()
+        spaceship_show = pygame.image.load('Images\\ship3.png').convert_alpha()
         connect1 = pygame.image.load('Images\\disconnect.png').convert_alpha()
         connect1_rect = connect1.get_rect(center=(300, 600))
         connect1_text = font_20.render('Connection 1', False, 'Green')
