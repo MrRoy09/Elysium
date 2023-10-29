@@ -55,7 +55,6 @@ class Player (pygame.sprite.Sprite):
         elif start_val > 12:
             start_tim=start_val
 
-
      def update(self):
         self.mov_forward()
         self.player_input()
@@ -335,8 +334,7 @@ if __name__=='__main__':
 
             score_disp()
             game.run_ep()
-            
-            
+             
         elif game_event==2:
             Main_surf.fill('black')
             Main_surf.blit(game_over_text,game_over_text_rect)
