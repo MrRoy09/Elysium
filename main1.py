@@ -230,12 +230,21 @@ class Game:
     def __init__(self):
         global lasers_g1
         global lasers_g2
+        self.lives = 3
+        self.live_surf = pygame.image.load('Images\\ship2.png').convert_alpha()
+        self.live_x_start_pos = 600 - (self.live_surf.get_size()[0]*2+20)
         self.player1_ship=Player((300,500))
         self.playermp=pygame.sprite.GroupSingle(self.player1_ship)
         self.player2_ship=EnemyPlayer((1000,700))
         self.playerep=pygame.sprite.GroupSingle(self.player2_ship)
         lasers_g1=self.player1_ship.lasers
         lasers_g2 = self.player2_ship.lasers
+
+    def show_lives(self):
+        for live in range(self.lives - 1):
+            x = self.live_x_start_pos + (live * (self.live_surf.get_size()[0]+10))
+            Main_surf.blit(self.live_surf,(x,8))
+
 
     def run_ep(self,x1,x2,y1,y2):
         global game_event
@@ -253,8 +262,7 @@ class Game:
         collided2= pygame.sprite.spritecollide(self.playermp.sprite, garbage, dokill=False)
         collided3 = pygame.sprite.spritecollide(self.playerep.sprite, asteroid2, dokill=False)
         collided4= pygame.sprite.spritecollide(self.playerep.sprite,garbage,dokill=False)
-        #collided5 = pygame.sprite.spritecollide(garbage.sprites,lasers_g2,dokill=False)
-        #collided6 = pygame.sprite.spritecollide(garbage.sprites, lasers_g1, dokill=False)
+    
         if collided1:
             game_event=2
             player_event = 2
@@ -264,19 +272,20 @@ class Game:
         for i in garbage.sprites():
             if pygame.sprite.spritecollide(i, lasers_g2, dokill=True) or pygame.sprite.spritecollide(i, lasers_g1,dokill=True):
                 garbage.remove(i)
-        if collided2:
-            count1 = 1
-            if count1 == 0.5:
-                game_event = 2
-                player_event = 1
-            count1 -= 0.5
-
-        if collided4:
-            count2 = 1
-            if count2 == 0.5:
-                game_event = 2
-                player_event = 2
-            count2 -= 0.5
+        for j in garbage.sprites():
+            if collided2:
+                garbage.remove(j)
+                self.lives -= 1
+                if self.lives <= 0:
+                    game_event = 2
+                    player_event=1
+        for k in garbage.sprites():
+            if collided4:
+                garbage.remove(k)
+                self.lives -= 1
+                if self.lives <= 0:
+                    game_event = 2
+                    player_event=2
         if colid_laser1:
             print("collison is working")
             game_event=2
