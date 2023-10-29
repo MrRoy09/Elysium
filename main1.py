@@ -105,11 +105,12 @@ class Player (pygame.sprite.Sprite):
         if self.rect.top <= 0:
             game_event=2
             player_event = 2
+        self.rect.y -= math.sin(start_val)
         if start_val >= 10 and start_val <= 12:
             self.rect.top -= 0.6
-        elif start_val >= 22 and start_val <= 23:
+        elif start_val >= 22 and start_val <= 22.5:
             self.rect.top += 0.6
-        elif start_val >= 34 and start_val <= 36:
+        elif start_val >= 34 and start_val <= 35:
             self.rect.top -= 0.6
         
          
@@ -305,7 +306,7 @@ def initFunction():
     global player_event
     Main_surf = pygame.display.set_mode((1400, 750))
 
-    pygame.display.set_caption('Star wars ripoff')
+    pygame.display.set_caption('Elysium')
     logo = pygame.image.load('Images\\logo.png')
     pygame.display.set_icon(logo)
     font_20 = pygame.font.Font('pixel.ttf', 20)
@@ -327,7 +328,7 @@ def initFunction():
         intro_x2 = 0
         intro_msg_1 = font_20.render('Dog in a Box Studio presents:', False, 'Green')
         intro_msg_rect1 = intro_msg_1.get_rect(center=(700, 50))
-        intro_msg_2 = font_60.render('Star wars ripoff', False, 'Blue')
+        intro_msg_2 = font_60.render('ELYSIUM', False, 'blue')
         intro_msg_rect2 = intro_msg_2.get_rect(center=(700, 150))
         Start_button = font_40.render('press space to begin', False, (255, 0, 100))
         Start_button_rect = Start_button.get_rect(center=(700, 400))
@@ -386,6 +387,9 @@ def initFunction():
         Enemy_Score_msg = font_20.render(f'Enemy Score: {score2}', False, 'red')
         Enemy_Score_msg_rect = Player_Score_msg.get_rect(bottomleft=(850, 100))
         Main_surf.blit(Enemy_Score_msg, Enemy_Score_msg_rect)
+        Player_instruct_msg = font_20.render('Press Space to Begin Again', False, 'Blue')
+        Player_instruct_msg_rect = Player_Score_msg.get_rect(center=(550, 600))
+        Main_surf.blit(Player_instruct_msg, Player_instruct_msg_rect)
 
 
     while True:
@@ -406,6 +410,16 @@ def initFunction():
                     asteroid2.add(asteroid())
                 if event.type == garbage_timer:
                     garbage.add(Garbage())
+
+            elif game_event == 2:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    asteroid2.remove(asteroid2.sprites())
+                    garbage.remove(garbage.sprites())
+                    lasers_g1.remove(lasers_g1.sprites())
+                    lasers_g2.remove(lasers_g2.sprites())
+                    game_event = 1
+                    start_time = int(pygame.time.get_ticks() / 1000)
+
 
         if game_event == 0:
             # background animations
