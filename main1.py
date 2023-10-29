@@ -71,7 +71,7 @@ class Player (pygame.sprite.Sprite):
 
         self.lasers = pygame.sprite.Group()
         self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
-        self.laser_sound.set_volume(0.5)
+        self.laser_sound.set_volume(0.1)
     
      def player_input(self,x,y):
         Keys=pygame.key.get_pressed()
@@ -134,7 +134,7 @@ class EnemyPlayer(pygame.sprite.Sprite):
 
         self.lasers = pygame.sprite.Group()
         self.laser_sound = pygame.mixer.Sound('audio\\laser.mp3')
-        self.laser_sound.set_volume(0.5)
+        self.laser_sound.set_volume(0.1)
     
     def player_input(self,x,y):
         Keys = pygame.key.get_pressed()
@@ -170,7 +170,7 @@ class Laser(pygame.sprite.Sprite):
 	def __init__(self,pos,speed):
 		super().__init__()
 		self.image = pygame.Surface((7,10))
-		self.image.fill('white')
+		self.image.fill('green')
 		self.rect = self.image.get_rect(center = pos)
 		self.speed = speed
 		self.height_y_constraint = 750
@@ -423,6 +423,11 @@ def initFunction():
                     start_time = int(pygame.time.get_ticks() / 1000)
                     score1=0
                     score2=0
+                    bg_music1 = 0
+                    bg_music2 = 0
+                    bg_music_play2.fadeout(200)
+
+
 
 
         if game_event == 0:
