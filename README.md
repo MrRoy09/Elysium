@@ -1,7 +1,7 @@
 # Elysium
 The purpose of the project is to create a minimal-setup, android controlled, multiplayer game in python. The game allows two users to connect to their laptop using their phone and play the classic "Space Invaders" with the fun twist of Multiplayer. 
 
-It was created in the 24hr long hackathon Syntax Error conducted by SDS Labs - IITR. <br>
+It was created in the 24hr long hackathon Syntax Error conducted by SDS Labs - IITR and it won first place in the Open Categort <br>
 <a>https://devfolio.co/projects/elysium-by-dog-in-a-box-studios-ecf1</a>
 
 # Setup
